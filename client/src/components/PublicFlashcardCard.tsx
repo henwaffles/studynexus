@@ -54,6 +54,12 @@ export default function PublicFlashcardCard({
 }: PublicFlashcardCardProps) {
   const [likeBump, setLikeBump] = useState(false);
 
+  const safeDifficulty =
+    difficulty && Object.prototype.hasOwnProperty.call(difficultyColors, difficulty)
+      ? difficulty
+      : 'medium';
+  const safeTags = Array.isArray(tags) ? tags : [];
+
   useEffect(() => {
     setLikeBump(true);
     const t = window.setTimeout(() => setLikeBump(false), 280);
@@ -86,7 +92,7 @@ export default function PublicFlashcardCard({
               {category}
             </span>
             <span className={`px-2 py-1 text-xs font-medium rounded border ${difficultyColors[difficulty]}`}>
-              {difficulty}
+              {safeDifficulty}
             </span>
           </div>
           <p className="text-xs text-text-secondary">
@@ -156,9 +162,9 @@ export default function PublicFlashcardCard({
         </div>
       )}
 
-      {tags && tags.length > 0 && (
+      {safeTags.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {tags.map((tag, index) => (
+          {safeTags.map((tag, index) => (
             <span key={index} className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
               {tag}
             </span>

@@ -84,7 +84,34 @@ export default function Library() {
     try {
       setIsLoading(true);
       const response = await api.get('/flashcards');
-      setFlashcards(response.data.data || []);
+      const raw = response.data.data || [];
+      const normalized = (Array.isArray(raw) ? raw : []).map((card: any) => {
+        let tags: string[] = [];
+        if (Array.isArray(card?.tags)) tags = card.tags;
+        else if (typeof card?.tags === 'string') {
+          try {
+            const parsed = JSON.parse(card.tags);
+            tags = Array.isArray(parsed) ? parsed : [];
+          } catch {
+            tags = [];
+          }
+        }
+
+        const difficulty = ['easy', 'medium', 'hard'].includes(card?.difficulty)
+          ? card.difficulty
+          : 'medium';
+
+        return {
+          ...card,
+          subject: String(card?.subject || ''),
+          category: String(card?.category || ''),
+          front: String(card?.front || ''),
+          back: String(card?.back || ''),
+          difficulty,
+          tags,
+        } as Flashcard;
+      });
+      setFlashcards(normalized);
     } catch (error) {
       console.error('Error fetching flashcards:', error);
     } finally {

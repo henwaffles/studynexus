@@ -43,6 +43,12 @@ export default function FlashcardCard({
   onEdit,
   onDelete,
 }: FlashcardCardProps) {
+  const safeDifficulty =
+    difficulty && Object.prototype.hasOwnProperty.call(difficultyColors, difficulty)
+      ? difficulty
+      : 'medium';
+  const safeTags = Array.isArray(tags) ? tags : [];
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -65,9 +71,9 @@ export default function FlashcardCard({
               {category}
             </span>
             <span
-              className={`px-2 py-1 text-xs font-medium rounded border ${difficultyColors[difficulty]}`}
+              className={`px-2 py-1 text-xs font-medium rounded border ${difficultyColors[safeDifficulty]}`}
             >
-              {difficulty}
+              {safeDifficulty}
             </span>
           </div>
           <p className="text-xs text-text-secondary">
@@ -144,9 +150,9 @@ export default function FlashcardCard({
       )}
 
       {/* Tags */}
-      {tags && tags.length > 0 && (
+      {safeTags.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {tags.map((tag, index) => (
+          {safeTags.map((tag, index) => (
             <span
               key={index}
               className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
