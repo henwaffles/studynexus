@@ -67,11 +67,16 @@ export default function PublicFlashcardCard({
   }, [likedByMe]);
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    if (Number.isNaN(date.getTime())) return 'Unknown date';
+    try {
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } catch {
+      return 'Unknown date';
+    }
   };
 
   return (
@@ -91,7 +96,7 @@ export default function PublicFlashcardCard({
             <span className="px-2 py-1 bg-card-hover text-text-secondary text-xs rounded max-w-[10rem] truncate">
               {category}
             </span>
-            <span className={`px-2 py-1 text-xs font-medium rounded border ${difficultyColors[difficulty]}`}>
+            <span className={`px-2 py-1 text-xs font-medium rounded border ${difficultyColors[safeDifficulty]}`}>
               {safeDifficulty}
             </span>
           </div>

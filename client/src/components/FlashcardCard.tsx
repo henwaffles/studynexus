@@ -51,11 +51,16 @@ export default function FlashcardCard({
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    if (Number.isNaN(date.getTime())) return 'Unknown date';
+    try {
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } catch {
+      return 'Unknown date';
+    }
   };
 
   return (

@@ -109,6 +109,8 @@ export default function Library() {
           back: String(card?.back || ''),
           difficulty,
           tags,
+          createdAt: typeof card?.createdAt === 'string' && card.createdAt ? card.createdAt : new Date().toISOString(),
+          updatedAt: typeof card?.updatedAt === 'string' && card.updatedAt ? card.updatedAt : new Date().toISOString(),
         } as Flashcard;
       });
       setFlashcards(normalized);
