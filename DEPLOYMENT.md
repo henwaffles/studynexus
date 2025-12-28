@@ -75,6 +75,16 @@ Recommended approach:
 1. Deploy the API first (with the env vars above)
 2. Apply migrations to Turso from your machine using Turso's SQL shell, using the SQL files in `server/prisma/migrations/*/migration.sql` in order.
 
+Install Turso CLI (Windows):
+- Turso CLI is installed via WSL on Windows.
+- In PowerShell: `wsl --install` (if needed), then `wsl`
+- In WSL: `curl -sSfL https://get.tur.so/install.sh | bash`
+- Reopen WSL and run: `turso auth login`
+
+One-command migration helper scripts (recommended):
+- WSL/Linux/macOS: `./server/scripts/applyTursoMigrations.sh studynexus`
+- Windows PowerShell (if `turso` is on PATH): `powershell -ExecutionPolicy Bypass -File server\scripts\applyTursoMigrations.ps1 -Db studynexus`
+
 On Windows PowerShell, the pattern is:
 - `Get-Content server\prisma\migrations\<migration_folder>\migration.sql | turso db shell <your-db-name>`
 
