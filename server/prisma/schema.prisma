@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  profileImageUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  flashcards Flashcard[]
+  flashcardLikes FlashcardLike[]
+  ownedDecks Deck[] @relation("DeckOwner")
+  deckMemberships DeckMember[]
+  deckFlashcardsAdded DeckFlashcard[] @relation("DeckFlashcardAddedBy")
+
+  @@map("users")
+}
+
+model Flashcard {
+  id            Int      @id @default(autoincrement())
+  front         String
+  back          String
+  subject       String
+  category      String
+  difficulty    String   // 'easy', 'medium', 'hard'
+  codeSnippet   String?
+  codeLanguage  String?
+  tags          String?  // JSON string array of tags
+  imageUrl      String?  // Cloudinary image URL
+  isPublic      Boolean  @default(false)
+  copiedFromId  Int?
+  userId        Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  copiedFrom Flashcard? @relation("FlashcardCopies", fields: [copiedFromId], references: [id], onDelete: SetNull)
+  copies     Flashcard[] @relation("FlashcardCopies")
+
+  deckLinks DeckFlashcard[]
+  likes FlashcardLike[]
+
+  @@index([subject])
+  @@index([category])
+  @@index([difficulty])
+  @@index([createdAt])
+  @@index([userId])
+  @@index([isPublic])
+  @@index([copiedFromId])
+  @@map("flashcards")
+}
+
+model FlashcardLike {
+  id          Int      @id @default(autoincrement())
+  flashcardId Int
+  userId      Int
+  createdAt   DateTime @default(now())
+
+  flashcard Flashcard @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([flashcardId, userId])
+  @@index([userId])
+  @@index([flashcardId])
+  @@map("flashcard_likes")
+}
+
+model Deck {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  ownerId     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner   User         @relation("DeckOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members DeckMember[]
+  cards   DeckFlashcard[]
+
+  @@index([ownerId])
+  @@index([createdAt])
+  @@map("decks")
+}
+
+model DeckMember {
+  id        Int      @id @default(autoincrement())
+  deckId    Int
+  userId    Int
+  role      String   @default("member") // owner | member
+  createdAt DateTime @default(now())
+
+  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([deckId, userId])
+  @@index([userId])
+  @@map("deck_members")
+}
+
+model DeckFlashcard {
+  id          Int      @id @default(autoincrement())
+  deckId      Int
+  flashcardId Int
+  addedById   Int
+  createdAt   DateTime @default(now())
+
+  deck      Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  flashcard Flashcard @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+  addedBy   User     @relation("DeckFlashcardAddedBy", fields: [addedById], references: [id], onDelete: Cascade)
+
+  @@unique([deckId, flashcardId])
+  @@index([flashcardId])
+  @@index([addedById])
+  @@map("deck_flashcards")
+}
+
+
+

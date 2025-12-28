@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: studynexus-server
+    env: node
+    rootDir: server
+    plan: free
+    buildCommand: npm ci && npm run prisma:generate && npm run prisma:migrate:deploy
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CLIENT_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: CLOUDINARY_URL
+        sync: false
