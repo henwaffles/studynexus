@@ -148,7 +148,7 @@ async function main() {
     for (const stmt of statements) {
       // Skip empty PRAGMA (shouldn't happen) and allow safe repeats where possible
       try {
-        await client.execute({ sql: stmt });
+        await client.execute({ sql: stmt, args: [] });
       } catch (err) {
         const msg = String(err && err.message ? err.message : err);
         // If re-running, some statements may already exist; treat these as non-fatal.
