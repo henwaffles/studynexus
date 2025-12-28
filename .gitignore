@@ -1,0 +1,23 @@
+# Env files (never commit secrets)
+**/.env
+**/.env.*
+!**/.env.example
+
+# Node
+**/node_modules/
+**/dist/
+**/.vite/
+**/coverage/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Local databases / generated files
+server/dev.db
+server/prisma/dev.db
+server/prisma/*.db
+
+# Local uploads (use Cloudinary in production)
+server/uploads/

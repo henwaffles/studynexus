@@ -1,21 +1,31 @@
 const { PrismaClient } = require('@prisma/client');
 
 function shouldUseLibsqlAdapter() {
-  const url = String(process.env.DATABASE_URL || '');
-  if (url.startsWith('libsql://')) return true;
-  if (process.env.TURSO_AUTH_TOKEN) return true;
-  return false;
+  const url = String(process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || '');
+  return url.startsWith('libsql://');
 }
 
 function createLibsqlPrismaClient() {
   const { createClient } = require('@libsql/client');
-  const { PrismaLibSQL } = require('@prisma/adapter-libsql');
+  const adapterLibsqlModule = require('@prisma/adapter-libsql');
 
-  const url = String(process.env.DATABASE_URL || '');
+  const url = String(process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || '');
   const authToken = process.env.TURSO_AUTH_TOKEN;
 
   const libsql = createClient({ url, authToken });
-  const adapter = new PrismaLibSQL(libsql);
+
+  const PrismaLibSQL =
+    adapterLibsqlModule.PrismaLibSQL ||
+    adapterLibsqlModule.PrismaLibSql ||
+    adapterLibsqlModule.default ||
+    adapterLibsqlModule;
+
+  let adapter;
+  try {
+    adapter = new PrismaLibSQL(libsql);
+  } catch (error) {
+    adapter = PrismaLibSQL(libsql);
+  }
 
   return new PrismaClient({
     adapter,

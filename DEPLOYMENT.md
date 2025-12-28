@@ -31,7 +31,7 @@ If you skip Turso/Cloudinary, many free hosts will have **non-persistent disks**
 3. Configure:
    - **Root Directory:** `server`
    - **Environment:** Node
-   - **Build Command:** `npm ci && npm run prisma:generate && npm run prisma:migrate:deploy`
+  - **Build Command:** `npm ci && npm run prisma:generate`
    - **Start Command:** `npm start`
 
 ### Render Environment Variables
@@ -42,9 +42,10 @@ Required:
 - `NODE_ENV` = `production`
 - `JWT_SECRET` = a long random string
 - `CLIENT_URL` = `https://YOUR-VERCEL-DOMAIN.vercel.app`
-- `DATABASE_URL` = Turso URL OR a SQLite file URL (see below)
+- `DATABASE_URL` = `file:./dev.db` (required by Prisma schema validation)
 
-Recommended for Turso:
+Recommended for Turso (persistent DB at runtime):
+- `TURSO_DATABASE_URL` = `libsql://...`
 - `TURSO_AUTH_TOKEN` = Turso auth token
 
 Recommended for Cloudinary (so image uploads persist):
@@ -57,12 +58,25 @@ Notes:
 
 **Recommended (persistent): Turso**
 - Turso gives you a `libsql://...` URL and an auth token.
+- Prisma schema validation for a SQLite datasource requires `DATABASE_URL` to start with `file:`.
 - Set:
-  - `DATABASE_URL=libsql://...`
+  - `DATABASE_URL=file:./dev.db`
+  - `TURSO_DATABASE_URL=libsql://...`
   - `TURSO_AUTH_TOKEN=...`
 
 **Not recommended for production (can reset): local SQLite file on Render**
 - `DATABASE_URL=file:./dev.db`
+
+### Applying migrations when using Turso
+
+Because Prisma migrations are validated against a SQLite `file:` URL in this repo, running `prisma migrate deploy` in Render builds can fail if you try to set `DATABASE_URL` to a `libsql://...` URL.
+
+Recommended approach:
+1. Deploy the API first (with the env vars above)
+2. Apply migrations to Turso from your machine using Turso's SQL shell, using the SQL files in `server/prisma/migrations/*/migration.sql` in order.
+
+On Windows PowerShell, the pattern is:
+- `Get-Content server\prisma\migrations\<migration_folder>\migration.sql | turso db shell <your-db-name>`
 
 After deploy, your API base URL will look like:
 - `https://YOUR-RENDER-SERVICE.onrender.com/api`
