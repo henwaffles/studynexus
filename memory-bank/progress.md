@@ -80,6 +80,7 @@
 - ✅ Token persistence with localStorage
 - ✅ Mobile-first UX polish pass completed across major pages/components
 - ✅ Free deployment scaffolding added (Vercel client + Render server + Turso/libSQL option)
+- ✅ Turso/libSQL runtime wired via Prisma v5 driver adapter (Prisma `@prisma/adapter-libsql` v5.x + `@libsql/client` v0.8.x)
 - ✅ Axios Authorization header auto-injection
 - ✅ Study mode with 3D flip animation
 - ✅ StudyCard component with front/back toggle

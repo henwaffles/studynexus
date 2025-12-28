@@ -39,3 +39,4 @@
 - Windows: Prisma can intermittently hit `EPERM` if the query engine DLL is locked; stopping Node processes before Prisma commands usually resolves it.
 - Cloudinary uploads require env vars; when missing, uploads fall back to local `/uploads` served by the API.
 - Free hosting caveat: SQLite files are usually ephemeral; use Turso/libSQL (or another managed DB) for persistence.
+- Prisma driver adapters are version-sensitive: `@prisma/adapter-libsql` must match Prisma major (v5.x here). The working wiring is `createClient({ url, authToken })` + `new PrismaLibSQL(client)`.
