@@ -3,6 +3,9 @@ import Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css'; // Dark theme
 
 // Import language support
+import 'prismjs/components/prism-markup';
+import 'prismjs/components/prism-markup-templating';
+import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-jsx';
@@ -62,7 +65,11 @@ export default function CodeSnippet({ code, language }: CodeSnippetProps) {
 
   useEffect(() => {
     if (codeRef.current) {
-      Prism.highlightElement(codeRef.current);
+      try {
+        Prism.highlightElement(codeRef.current);
+      } catch (err) {
+        console.error('Prism highlight failed:', err);
+      }
     }
   }, [code, language]);
 
