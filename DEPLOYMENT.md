@@ -85,6 +85,12 @@ One-command migration helper scripts (recommended):
 - WSL/Linux/macOS: `./server/scripts/applyTursoMigrations.sh studynexus`
 - Windows PowerShell (if `turso` is on PATH): `powershell -ExecutionPolicy Bypass -File server\scripts\applyTursoMigrations.ps1 -Db studynexus`
 
+Windows quick option (no WSL, no Turso CLI):
+- You can apply migrations directly from Node using libSQL.
+- In PowerShell:
+  - `cd server`
+  - `node scripts/applyTursoMigrationsWithLibsql.js --url "libsql://..." --token "YOUR_TURSO_AUTH_TOKEN"`
+
 On Windows PowerShell, the pattern is:
 - `Get-Content server\prisma\migrations\<migration_folder>\migration.sql | turso db shell <your-db-name>`
 
