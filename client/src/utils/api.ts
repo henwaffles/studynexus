@@ -4,7 +4,14 @@ function getApiBaseUrl() {
   const raw = import.meta.env.VITE_API_URL;
   if (!raw) return '/api';
 
-  const trimmed = String(raw).replace(/\/+$/, '');
+  let trimmed = String(raw).trim().replace(/\/+$/, '');
+
+  // If the user provided a bare hostname like "my-api.up.railway.app",
+  // axios will treat it as a relative URL. Prefix https:// to make it absolute.
+  if (!/^https?:\/\//i.test(trimmed) && !trimmed.startsWith('/')) {
+    trimmed = `https://${trimmed}`;
+  }
+
   if (trimmed.endsWith('/api')) return trimmed;
   return `${trimmed}/api`;
 }
