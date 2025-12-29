@@ -2,6 +2,7 @@ import './style.css'
 import { StrictMode, Suspense, lazy } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { registerSW } from 'virtual:pwa-register'
 import { AuthProvider } from './contexts/AuthContext'
 import { SettingsProvider } from './contexts/SettingsContext'
 import Layout from './components/Layout'
@@ -21,12 +22,9 @@ import ProtectedRoute from './components/ProtectedRoute'
 import api from './utils/api'
 
 // Service worker registration (production only)
-if ((import.meta as any)?.env?.PROD && 'serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
-      // No-op: offline support is best-effort
-    });
-  });
+// Using VitePWA helper improves update behavior (reduces stale cached chunks).
+if ((import.meta as any)?.env?.PROD) {
+  registerSW({ immediate: true });
 }
 
 // Test API connection
